@@ -5,7 +5,9 @@ import Score from './Score.js';
 import ItemController from './ItemController.js';
 import './Socket.js';
 import { sendEvent } from './Socket.js';
-import stageTable from './assets/stage.json' with { type: 'json' };
+import stageData from './assets/stage.json' with { type: 'json' };
+import itemData from './assets/item.json' with { type: 'json' };
+import itemUnlockData from './assets/item_unlock.json' with { type: 'json' };
 
 const canvas = document.getElementById('game');
 const ctx = canvas.getContext('2d');
@@ -37,12 +39,10 @@ const CACTI_CONFIG = [
 ];
 
 // 아이템
-const ITEM_CONFIG = [
-  { width: 50 / 1.5, height: 50 / 1.5, id: 1, image: 'images/items/pokeball_red.png' },
-  { width: 50 / 1.5, height: 50 / 1.5, id: 2, image: 'images/items/pokeball_yellow.png' },
-  { width: 50 / 1.5, height: 50 / 1.5, id: 3, image: 'images/items/pokeball_purple.png' },
-  { width: 50 / 1.5, height: 50 / 1.5, id: 4, image: 'images/items/pokeball_cyan.png' },
-];
+const ITEM_CONFIG = itemData.data;
+const ITEM_UNLOCK_CONFIG = itemUnlockData.data;
+// 스테이지 정보
+const STAGE_DATA = stageData.data;
 
 // 게임 요소들
 let player = null;
@@ -104,9 +104,15 @@ function createSprites() {
     };
   });
 
-  itemController = new ItemController(ctx, itemImages, scaleRatio, GROUND_SPEED);
+  itemController = new ItemController(
+    ctx,
+    itemImages,
+    scaleRatio,
+    GROUND_SPEED,
+    ITEM_UNLOCK_CONFIG,
+  );
 
-  score = new Score(ctx, scaleRatio, stageTable.data);
+  score = new Score(ctx, scaleRatio, STAGE_DATA, ITEM_CONFIG, itemController);
 }
 
 function getScaleRatio() {
